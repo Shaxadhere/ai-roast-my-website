@@ -1,26 +1,35 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Flame, 
-  Search, 
-  History as HistoryIcon, 
-  Info, 
-  RotateCcw, 
-  Share2, 
-  Copy, 
-  Twitter, 
-  Linkedin, 
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Flame,
+  Search,
+  History as HistoryIcon,
+  Info,
+  RotateCcw,
+  Share2,
+  Copy,
+  Twitter,
+  Linkedin,
   ExternalLink,
   MessageSquare,
-  AlertCircle
-} from 'lucide-react';
-import { RoastStyle, RoastResult, RoastHistoryItem, WebsiteData } from './types';
-import { STYLE_DESCRIPTIONS, LOADING_MESSAGES, APP_NAME, APP_TAGLINE } from './constants';
-import { scrapeWebsite } from './services/webScraper';
-import { generateRoast } from './services/geminiService';
+  AlertCircle,
+} from "lucide-react";
+import {
+  RoastStyle,
+  RoastResult,
+  RoastHistoryItem,
+  WebsiteData,
+} from "./types";
+import {
+  STYLE_DESCRIPTIONS,
+  LOADING_MESSAGES,
+  APP_NAME,
+  APP_TAGLINE,
+} from "./constants";
+import { scrapeWebsite } from "./services/webScraper";
+import { generateRoast } from "./services/geminiService";
 
 const App: React.FC = () => {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [style, setStyle] = useState<RoastStyle>(RoastStyle.SAVAGE);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGES[0]);
@@ -32,7 +41,7 @@ const App: React.FC = () => {
 
   // Load history from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('roast_history');
+    const saved = localStorage.getItem("roast_history");
     if (saved) {
       setHistory(JSON.parse(saved));
     }
@@ -45,11 +54,11 @@ const App: React.FC = () => {
       url: roast.url,
       title: roast.websiteTitle,
       vibeScore: roast.vibeScore,
-      timestamp: roast.timestamp
+      timestamp: roast.timestamp,
     };
     const newHistory = [newItem, ...history].slice(0, 5);
     setHistory(newHistory);
-    localStorage.setItem('roast_history', JSON.stringify(newHistory));
+    localStorage.setItem("roast_history", JSON.stringify(newHistory));
   };
 
   // Cycling loading messages
@@ -57,7 +66,9 @@ const App: React.FC = () => {
     let interval: number;
     if (isLoading) {
       interval = window.setInterval(() => {
-        setLoadingMessage(LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]);
+        setLoadingMessage(
+          LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)],
+        );
       }, 2000);
     }
     return () => clearInterval(interval);
@@ -65,7 +76,7 @@ const App: React.FC = () => {
 
   const handleRoast = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!url.startsWith('http')) {
+    if (!url.startsWith("http")) {
       setError("URL must start with http:// or https://");
       return;
     }
@@ -92,7 +103,10 @@ const App: React.FC = () => {
   };
 
   const shareOnTwitter = (text: string) => {
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
+      "_blank",
+    );
   };
 
   return (
@@ -100,12 +114,17 @@ const App: React.FC = () => {
       {/* Navbar */}
       <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setCurrentRoast(null)}>
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => setCurrentRoast(null)}
+          >
             <Flame className="w-8 h-8 text-rose-500 fill-rose-500" />
-            <span className="font-bangers text-2xl tracking-wider text-rose-500">{APP_NAME}</span>
+            <span className="font-bangers text-2xl tracking-wider text-rose-500">
+              {APP_NAME}
+            </span>
           </div>
           <div className="flex items-center gap-4">
-            <button 
+            <button
               onClick={() => setShowHistory(!showHistory)}
               className="p-2 hover:bg-slate-800 rounded-full transition-colors relative"
             >
@@ -114,7 +133,7 @@ const App: React.FC = () => {
                 <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
               )}
             </button>
-            <button 
+            <button
               onClick={() => setShowDisclaimer(true)}
               className="p-2 hover:bg-slate-800 rounded-full transition-colors"
             >
@@ -133,14 +152,18 @@ const App: React.FC = () => {
                 Roast My Website
               </h1>
               <p className="text-xl text-slate-400 max-w-xl mx-auto">
-                {APP_TAGLINE} Enter a URL and let our AI judge your life choices.
+                {APP_TAGLINE} Enter a URL and let our AI judge your life
+                choices.
               </p>
             </div>
 
-            <form onSubmit={handleRoast} className="space-y-6 max-w-2xl mx-auto bg-slate-900/40 p-8 rounded-3xl border border-slate-800 shadow-2xl">
+            <form
+              onSubmit={handleRoast}
+              className="space-y-6 max-w-2xl mx-auto bg-slate-900/40 p-8 rounded-3xl border border-slate-800 shadow-2xl"
+            >
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
-                <input 
+                <input
                   type="url"
                   placeholder="https://your-shameful-site.com"
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all text-lg"
@@ -157,9 +180,9 @@ const App: React.FC = () => {
                     type="button"
                     onClick={() => setStyle(s)}
                     className={`p-3 rounded-xl border text-sm font-medium transition-all text-left flex flex-col gap-1 ${
-                      style === s 
-                        ? 'bg-rose-500/10 border-rose-500 text-rose-500' 
-                        : 'bg-slate-950 border-slate-800 hover:border-slate-600'
+                      style === s
+                        ? "bg-rose-500/10 border-rose-500 text-rose-500"
+                        : "bg-slate-950 border-slate-800 hover:border-slate-600"
                     }`}
                   >
                     <span>{s}</span>
@@ -170,7 +193,7 @@ const App: React.FC = () => {
                 ))}
               </div>
 
-              <button 
+              <button
                 type="submit"
                 disabled={isLoading}
                 className="w-full bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-rose-900/20 transition-all text-xl flex items-center justify-center gap-2 group"
@@ -178,7 +201,7 @@ const App: React.FC = () => {
                 Let's Go!
                 <Flame className="w-6 h-6 group-hover:animate-bounce" />
               </button>
-              
+
               {error && (
                 <div className="flex items-center gap-2 text-rose-400 text-sm justify-center bg-rose-500/10 p-3 rounded-lg border border-rose-500/20">
                   <AlertCircle className="w-4 h-4" />
@@ -203,7 +226,9 @@ const App: React.FC = () => {
               <Flame className="w-24 h-24 text-rose-500 relative z-10" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-200">{loadingMessage}</h2>
+              <h2 className="text-2xl font-bold text-slate-200">
+                {loadingMessage}
+              </h2>
               <p className="text-slate-500">Sharpening the virtual tongue...</p>
             </div>
           </div>
@@ -214,10 +239,17 @@ const App: React.FC = () => {
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-6">
               <div>
-                <h2 className="text-3xl font-extrabold text-white mb-2">{currentRoast.websiteTitle}</h2>
+                <h2 className="text-3xl font-extrabold text-white mb-2">
+                  {currentRoast.websiteTitle}
+                </h2>
                 <div className="flex items-center gap-2 text-slate-400 text-sm">
                   <ExternalLink className="w-4 h-4" />
-                  <a href={currentRoast.url} target="_blank" rel="noopener noreferrer" className="hover:text-rose-400 underline transition-colors">
+                  <a
+                    href={currentRoast.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-rose-400 underline transition-colors"
+                  >
                     {currentRoast.url}
                   </a>
                   <span className="mx-2">•</span>
@@ -227,7 +259,7 @@ const App: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                 <button 
+                <button
                   onClick={() => setCurrentRoast(null)}
                   className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-all"
                 >
@@ -239,37 +271,64 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Vibe Score Card */}
               <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl flex flex-col items-center justify-center text-center space-y-4">
-                <span className="text-slate-500 font-semibold uppercase tracking-widest text-xs">Vibe Score</span>
+                <span className="text-slate-500 font-semibold uppercase tracking-widest text-xs">
+                  Vibe Score
+                </span>
                 <div className="relative">
-                  <div className="text-8xl font-bangers text-rose-500">{currentRoast.vibeScore}</div>
-                  <span className="absolute -right-6 bottom-4 text-2xl text-slate-700 font-bold">/ 10</span>
+                  <div className="text-8xl font-bangers text-rose-500">
+                    {currentRoast.vibeScore}
+                  </div>
+                  <span className="absolute -right-6 bottom-4 text-2xl text-slate-700 font-bold">
+                    / 10
+                  </span>
                 </div>
-                <p className="text-slate-400 italic">"The audacity level is high."</p>
+                <p className="text-slate-400 italic">
+                  "The audacity level is high."
+                </p>
               </div>
 
               {/* Summary Card */}
               <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl space-y-4 flex flex-col justify-center">
                 <div className="flex items-center gap-2 text-rose-400">
                   <MessageSquare className="w-5 h-5" />
-                  <span className="font-bold uppercase tracking-widest text-xs">The Punchline</span>
+                  <span className="font-bold uppercase tracking-widest text-xs">
+                    The Punchline
+                  </span>
                 </div>
                 <p className="text-2xl font-bold text-white italic leading-relaxed">
                   "{currentRoast.summary}"
                 </p>
                 <div className="flex items-center gap-3 pt-4">
-                  <button 
+                  <button
                     onClick={() => copyToClipboard(currentRoast.summary)}
                     className="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-all"
                     title="Copy Summary"
                   >
                     <Copy className="w-5 h-5" />
                   </button>
-                  <button 
-                    onClick={() => shareOnTwitter(`${currentRoast.summary} Roast your site at ${window.location.href}`)}
+                  <button
+                    onClick={() =>
+                      shareOnTwitter(
+                        `${currentRoast.summary} Roast your site at ${window.location.href}`,
+                      )
+                    }
                     className="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-all text-blue-400"
                     title="Share on X"
                   >
                     <Twitter className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      const text = `${currentRoast.summary} Roast your site at ${window.location.href}`;
+                      window.open(
+                        `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${encodeURIComponent(text)}`,
+                        "_blank",
+                      );
+                    }}
+                    className="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-all text-blue-600"
+                    title="Share on LinkedIn"
+                  >
+                    <Linkedin className="w-5 h-5" />
                   </button>
                 </div>
               </div>
@@ -277,21 +336,43 @@ const App: React.FC = () => {
 
             {/* Detailed Categories */}
             <div className="grid grid-cols-1 gap-6">
-              <RoastSection title="First Impression" content={currentRoast.firstImpression} emoji="👀" />
-              <RoastSection title="Design & UI" content={currentRoast.designUI} emoji="🎨" />
-              <RoastSection title="Content & Copy" content={currentRoast.contentCopy} emoji="✍️" />
-              <RoastSection title="Performance & UX" content={currentRoast.performanceUX} emoji="⚡" />
+              <RoastSection
+                title="First Impression"
+                content={currentRoast.firstImpression}
+                emoji="👀"
+              />
+              <RoastSection
+                title="Design & UI"
+                content={currentRoast.designUI}
+                emoji="🎨"
+              />
+              <RoastSection
+                title="Content & Copy"
+                content={currentRoast.contentCopy}
+                emoji="✍️"
+              />
+              <RoastSection
+                title="Performance & UX"
+                content={currentRoast.performanceUX}
+                emoji="⚡"
+              />
             </div>
 
             {/* Social Share Call to Action */}
             <div className="bg-gradient-to-br from-rose-600 to-orange-500 p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 text-white">
               <div className="space-y-1">
                 <h3 className="text-2xl font-bold">Spread the Roast!</h3>
-                <p className="opacity-90">Let the world see this masterpiece of judgment.</p>
+                <p className="opacity-90">
+                  Let the world see this masterpiece of judgment.
+                </p>
               </div>
               <div className="flex items-center gap-3 w-full md:w-auto">
-                <button 
-                  onClick={() => copyToClipboard(`My site got a ${currentRoast.vibeScore}/10 on ${APP_NAME}! Roast: ${currentRoast.summary}`)}
+                <button
+                  onClick={() =>
+                    copyToClipboard(
+                      `My site got a ${currentRoast.vibeScore}/10 on ${APP_NAME}! Roast: ${currentRoast.summary}`,
+                    )
+                  }
                   className="flex-1 md:flex-none px-6 py-3 bg-white/20 hover:bg-white/30 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
                 >
                   <Share2 className="w-5 h-5" /> Share Full Roast
@@ -311,7 +392,7 @@ const App: React.FC = () => {
                 <HistoryIcon className="w-6 h-6 text-rose-500" />
                 <h2 className="text-xl font-bold">Recent Victims</h2>
               </div>
-              <button 
+              <button
                 onClick={() => setShowHistory(false)}
                 className="p-2 hover:bg-slate-800 rounded-full"
               >
@@ -339,10 +420,16 @@ const App: React.FC = () => {
                     className="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl hover:border-rose-500/50 transition-all text-left group"
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="font-bold text-white truncate text-sm">{item.title}</span>
-                      <span className="text-rose-500 font-bangers text-lg">{item.vibeScore}/10</span>
+                      <span className="font-bold text-white truncate text-sm">
+                        {item.title}
+                      </span>
+                      <span className="text-rose-500 font-bangers text-lg">
+                        {item.vibeScore}/10
+                      </span>
                     </div>
-                    <div className="text-xs text-slate-500 truncate">{item.url}</div>
+                    <div className="text-xs text-slate-500 truncate">
+                      {item.url}
+                    </div>
                     <div className="mt-3 flex items-center gap-2 text-[10px] text-slate-600 font-mono">
                       {new Date(item.timestamp).toLocaleString()}
                     </div>
@@ -352,10 +439,10 @@ const App: React.FC = () => {
             </div>
 
             <div className="pt-6 border-t border-slate-800">
-              <button 
+              <button
                 onClick={() => {
                   setHistory([]);
-                  localStorage.removeItem('roast_history');
+                  localStorage.removeItem("roast_history");
                 }}
                 className="w-full py-3 text-xs text-slate-500 hover:text-rose-400 transition-colors"
               >
@@ -374,11 +461,21 @@ const App: React.FC = () => {
               <Info className="text-rose-500" /> Wait a second...
             </h2>
             <div className="space-y-4 text-slate-400 leading-relaxed">
-              <p>This app is for <strong>entertainment purposes only</strong>. The AI generated content is intended to be humorous and satirical.</p>
-              <p>We do not store your data or the analyzed website's content permanently beyond your local browser history.</p>
-              <p>Please don't take these roasts personally. Your code is probably fine. Mostly.</p>
+              <p>
+                This app is for <strong>entertainment purposes only</strong>.
+                The AI generated content is intended to be humorous and
+                satirical.
+              </p>
+              <p>
+                We do not store your data or the analyzed website's content
+                permanently beyond your local browser history.
+              </p>
+              <p>
+                Please don't take these roasts personally. Your code is probably
+                fine. Mostly.
+              </p>
             </div>
-            <button 
+            <button
               onClick={() => setShowDisclaimer(false)}
               className="w-full py-4 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition-all"
             >
@@ -409,11 +506,11 @@ const RoastSection: React.FC<SectionProps> = ({ title, content, emoji }) => {
     <div className="group bg-slate-900 border border-slate-800 p-8 rounded-3xl space-y-4 hover:border-slate-700 transition-all duration-300 shadow-sm hover:shadow-xl">
       <div className="flex items-center gap-3">
         <span className="text-3xl">{emoji}</span>
-        <h3 className="text-xl font-bold text-rose-500 group-hover:text-rose-400 transition-colors uppercase tracking-tight">{title}</h3>
+        <h3 className="text-xl font-bold text-rose-500 group-hover:text-rose-400 transition-colors uppercase tracking-tight">
+          {title}
+        </h3>
       </div>
-      <p className="text-slate-300 leading-relaxed text-lg">
-        {content}
-      </p>
+      <p className="text-slate-300 leading-relaxed text-lg">{content}</p>
     </div>
   );
 };
