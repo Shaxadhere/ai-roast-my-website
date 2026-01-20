@@ -28,6 +28,8 @@ import {
 import { scrapeWebsite } from "./services/webScraper";
 import { generateRoast } from "./services/geminiService";
 
+import html2canvas from "html2canvas";
+
 const App: React.FC = () => {
   const [url, setUrl] = useState("");
   const [style, setStyle] = useState<RoastStyle>(RoastStyle.SAVAGE);
@@ -38,6 +40,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const resultsRef = React.useRef<HTMLDivElement>(null);
 
   // Load history from localStorage
   useEffect(() => {
@@ -107,6 +110,55 @@ const App: React.FC = () => {
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
       "_blank",
     );
+  };
+
+  const generateAndShareImage = async () => {
+    if (!resultsRef.current || !currentRoast) return;
+
+    try {
+      const canvas = await html2canvas(resultsRef.current, {
+        backgroundColor: "#020617", // Match slate-950
+        scale: 2, // Better quality
+      });
+
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          alert("Failed to generate image");
+          return;
+        }
+
+        const file = new File([blob], "roast-result.png", {
+          type: "image/png",
+        });
+        const shareData = {
+          title: `My Website Roast - ${currentRoast.websiteTitle}`,
+          text: `My site got a ${currentRoast.vibeScore}/10! "${currentRoast.summary}" #RoastMyWebsite`,
+          files: [file],
+        };
+
+        if (navigator.canShare && navigator.canShare(shareData)) {
+          try {
+            await navigator.share(shareData);
+          } catch (err) {
+            if ((err as Error).name !== "AbortError") {
+              console.error("Error sharing:", err);
+            }
+          }
+        } else {
+          // Fallback to download
+          const link = document.createElement("a");
+          link.download = "roast-result.png";
+          link.href = canvas.toDataURL();
+          link.click();
+          alert(
+            "Image downloaded! You can now share it on LinkedIn or Twitter.",
+          );
+        }
+      });
+    } catch (err) {
+      console.error("Failed to generate image:", err);
+      alert("Could not generate image.");
+    }
   };
 
   return (
@@ -236,7 +288,10 @@ const App: React.FC = () => {
 
         {/* Results View */}
         {currentRoast && !isLoading && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div
+            ref={resultsRef}
+            className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-slate-950 p-4 rounded-3xl"
+          >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-6">
               <div>
                 <h2 className="text-3xl font-extrabold text-white mb-2">
@@ -329,6 +384,13 @@ const App: React.FC = () => {
                     title="Share on LinkedIn"
                   >
                     <Linkedin className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={generateAndShareImage}
+                    className="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-all text-purple-400"
+                    title="Share Screenshot"
+                  >
+                    <Share2 className="w-5 h-5" />
                   </button>
                 </div>
               </div>
