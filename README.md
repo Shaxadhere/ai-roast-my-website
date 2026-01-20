@@ -6,12 +6,12 @@ A fun, interactive React application that uses Google's Gemini AI to analyze and
 
 ## ✨ Features
 
-- **AI-Powered Analysis**: scrapes website metadata and content to generate context-aware roasts using google gemini.
+- **AI-Powered Analysis**: Scrapes website metadata and content to generate context-aware roasts using Google Gemini.
 - **Multiple Roast Personas**:
   - **Savage but Smart**: The default mode. Ruthless but constructive.
   - **Light & Friendly**: A gentle nudge in the right direction.
   - **Gen-Z Internet Roast**: Full of slang and brutal honesty.
-  - **Corporate Buzzword Roast**: critiques your "synergy" and "paradigm shifts".
+  - **Corporate Buzzword Roast**: Critiques your "synergy" and "paradigm shifts".
   - **Professional Critique**: Serious feedback for serious developers.
 - **Vibe Score**: A calculated rating (0-10) of your website's overall appeal.
 - **Detailed Breakdown**: Specific feedback on First Impressions, Design & UI, Content & Copy, and Performance/UX.
@@ -54,15 +54,13 @@ Follow these steps to get the project running locally.
     Create a `.env.local` file in the root directory:
 
     ```bash
-    cp .env.local.example .env.local
+    touch .env.local
     ```
 
-    _(Or just create a new file named `.env.local`)_
-
-    Add your Gemini API key:
+    Add your Gemini API key to the file:
 
     ```env
-    VITE_GEMINI_API_KEY=your_actual_api_key_here
+    GEMINI_API_KEY=your_actual_api_key_here
     ```
 
 4.  **Run the Development Server**
@@ -71,7 +69,7 @@ Follow these steps to get the project running locally.
     npm run dev
     ```
 
-    The app should now be running at `http://localhost:5173`.
+    The app should now be running at `http://localhost:3000`.
 
 ## 📦 Build for Production
 
