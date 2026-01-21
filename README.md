@@ -2,7 +2,7 @@
 
 A fun, interactive React application that uses Google's Gemini AI to analyze and "roast" websites. Whether you want a savage critique, a Gen-Z reality check, or a professional design review, this app delivers instant feedback on your web design choices.
 
-![Project Preview](https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6)
+![Project Preview](https://raw.githubusercontent.com/Shaxadhere/ai-roast-my-website/refs/heads/main/assets/app-preview.png)
 
 ## ✨ Features
 
